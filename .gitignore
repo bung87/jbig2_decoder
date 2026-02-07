@@ -2,6 +2,8 @@
 !**/
 !*.*
 testresults/
+tests/megatest.nim
+outputGotten.txt
 JBig2Decoder
 test
 # Cache
