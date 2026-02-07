@@ -6,7 +6,7 @@ const
   jbig2HuffmanOOB* = 0xfffffffe'i64
   jbig2HuffmanEOT* = 0xffffffff'i64
 
-# Table B.1 - Standard Huffman table for bitmap size
+# Table B.1 - Standard Huffman table for bitmap size (same as C# huffmanTableA)
 const huffmanTableA* = @[
   @[0'i64, 1, 4, 0],      # 0
   @[16'i64, 2, 8, 2],     # 1
@@ -15,7 +15,7 @@ const huffmanTableA* = @[
   @[0'i64, 0, jbig2HuffmanEOT, 0]  # End of table
 ]
 
-# Table B.2 - Standard Huffman table for OOB (Out Of Band)
+# Table B.2 - Standard Huffman table for OOB (Out Of Band) (same as C# huffmanTableB)
 const huffmanTableB* = @[
   @[0'i64, 1, 0, 0],      # 0
   @[1'i64, 2, 0, 2],      # 1
@@ -27,7 +27,7 @@ const huffmanTableB* = @[
   @[0'i64, 0, jbig2HuffmanEOT, 0]  # End of table
 ]
 
-# Table B.3 - Standard Huffman table for symbol ID lengths
+# Table B.3 - Standard Huffman table for symbol ID lengths (same as C# huffmanTableC)
 const huffmanTableC* = @[
   @[0'i64, 2, 0, 0],      # 0
   @[1'i64, 3, 0, 2],      # 1
@@ -47,6 +47,10 @@ const huffmanTableC* = @[
   @[15'i64, 9, 0, 383],   # 15
   @[0'i64, 0, jbig2HuffmanEOT, 0]  # End of table
 ]
+
+# Note: huffmanTableD, huffmanTableE, huffmanTableF, huffmanTableH, huffmanTableK are defined later in this file
+# Table B.6 - Standard Huffman table for bitmap sizes (same as C# huffmanTableA - reused)
+# Table B.7 - Standard Huffman table for aggregation instances (same as C# huffmanTableA - reused)
 
 type
   DecodeIntResult* = object

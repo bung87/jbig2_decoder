@@ -99,10 +99,10 @@ method readSegment*(segment: SymbolDictionarySegment) =
   # Extract flag values
   let sdHuff = (segment.symbolDictionaryFlags and 1) != 0
   let sdRefAgg = ((segment.symbolDictionaryFlags shr 1) and 1) != 0
-  discard ((segment.symbolDictionaryFlags shr 2) and 3)  # sdHuffDH - reserved for future use
-  discard ((segment.symbolDictionaryFlags shr 4) and 3)  # sdHuffDW - reserved for future use
-  discard ((segment.symbolDictionaryFlags shr 6) and 1)  # sdHuffBMSize - reserved for future use
-  discard ((segment.symbolDictionaryFlags shr 7) and 1)  # sdHuffAggInst - reserved for future use
+  let sdHuffDH = ((segment.symbolDictionaryFlags shr 2) and 3)  # Huffman table for height differences
+  let sdHuffDW = ((segment.symbolDictionaryFlags shr 4) and 3)  # Huffman table for width differences
+  let sdHuffBMSize = ((segment.symbolDictionaryFlags shr 6) and 1)  # Huffman table for bitmap size
+  let sdHuffAggInst = ((segment.symbolDictionaryFlags shr 7) and 1)  # Huffman table for aggregation instances
   let contextUsed = ((segment.symbolDictionaryFlags shr 8) and 1) != 0
   let sdTemplate = ((segment.symbolDictionaryFlags shr 10) and 3)
   let sdRefTemplate = ((segment.symbolDictionaryFlags shr 12) and 1)
@@ -128,11 +128,44 @@ method readSegment*(segment: SymbolDictionarySegment) =
   # Initialize bitmaps array
   var bitmaps = newSeq[JBIG2Bitmap](numberOfInputSymbols + segment.noOfNewSymbols)
 
+  # Set up Huffman tables if using Huffman encoding
+  var huffmanDHTable: seq[seq[int64]] = @[]
+  var huffmanDWTable: seq[seq[int64]] = @[]
+  var huffmanBMSizeTable: seq[seq[int64]] = @[]
+  var huffmanAggInstTable: seq[seq[int64]] = @[]
+
   if sdHuff:
-    # Set up Huffman tables based on flag values
-    # These would need to reference actual Huffman tables
-    # var huffmanDHTable, huffmanDWTable, huffmanBMSizeTable, huffmanAggInstTable
-    discard
+    # Select Huffman table for height differences (sdHuffDH)
+    if sdHuffDH == 0:
+      huffmanDHTable = huffmanTableD
+    elif sdHuffDH == 1:
+      huffmanDHTable = huffmanTableE
+    else:
+      # Custom table from code table segment - not implemented yet
+      huffmanDHTable = huffmanTableD  # Fallback
+
+    # Select Huffman table for width differences (sdHuffDW)
+    if sdHuffDW == 0:
+      huffmanDWTable = huffmanTableB
+    elif sdHuffDW == 1:
+      huffmanDWTable = huffmanTableC
+    else:
+      # Custom table from code table segment - not implemented yet
+      huffmanDWTable = huffmanTableB  # Fallback
+
+    # Select Huffman table for bitmap size (sdHuffBMSize)
+    if sdHuffBMSize == 0:
+      huffmanBMSizeTable = huffmanTableA
+    else:
+      # Custom table from code table segment - not implemented yet
+      huffmanBMSizeTable = huffmanTableA  # Fallback
+
+    # Select Huffman table for aggregation instances (sdHuffAggInst)
+    if sdHuffAggInst == 0:
+      huffmanAggInstTable = huffmanTableA
+    else:
+      # Custom table from code table segment - not implemented yet
+      huffmanAggInstTable = huffmanTableA  # Fallback
 
   # Initialize arithmetic decoder if not using Huffman
   if not sdHuff:
@@ -160,7 +193,9 @@ method readSegment*(segment: SymbolDictionarySegment) =
 
     if sdHuff:
       # Decode using Huffman
-      discard  # Would use huffmanDecoder.decodeInt
+      let decodeResult = segment.huffmanDecoder.decodeInt(huffmanDHTable)
+      if decodeResult.success:
+        instanceDeltaHeight = decodeResult.value
     else:
       # Decode using arithmetic
       instanceDeltaHeight = segment.arithmeticDecoder.decodeInt(segment.arithmeticDecoder.iadhStats).value.int64
@@ -176,7 +211,8 @@ method readSegment*(segment: SymbolDictionarySegment) =
       var decodeResult: arithmetic_decoder.DecodeIntResult
 
       if sdHuff:
-        discard  # Would use huffmanDecoder.decodeInt
+        let huffResult = segment.huffmanDecoder.decodeInt(huffmanDWTable)
+        decodeResult = arithmetic_decoder.DecodeIntResult(value: huffResult.value, success: huffResult.success)
       else:
         decodeResult = segment.arithmeticDecoder.decodeInt(segment.arithmeticDecoder.iadwStats)
 
@@ -194,7 +230,9 @@ method readSegment*(segment: SymbolDictionarySegment) =
         var refAggNum: int64 = 0
 
         if sdHuff:
-          discard  # Would use huffmanDecoder.decodeInt
+          let huffResult = segment.huffmanDecoder.decodeInt(huffmanAggInstTable)
+          if huffResult.success:
+            refAggNum = huffResult.value
         else:
           refAggNum = segment.arithmeticDecoder.decodeInt(segment.arithmeticDecoder.iaaiStats).value.int64
 
@@ -205,7 +243,18 @@ method readSegment*(segment: SymbolDictionarySegment) =
           var referenceDY: int64 = 0
 
           if sdHuff:
-            discard  # Would read bits and decode
+            # Read symbol ID directly as bits
+            symbolID = segment.reader.readBits(symbolCodeLength).int64
+            # Decode reference offsets using huffmanTableO
+            let dxResult = segment.huffmanDecoder.decodeInt(huffmanTableO)
+            if dxResult.success:
+              referenceDX = dxResult.value
+            let dyResult = segment.huffmanDecoder.decodeInt(huffmanTableO)
+            if dyResult.success:
+              referenceDY = dyResult.value
+            # Consume remaining bits and start arithmetic decoder for refinement
+            segment.reader.consumeRemainingBits()
+            segment.arithmeticDecoder.start()
           else:
             symbolID = segment.arithmeticDecoder.decodeIAID(symbolCodeLength, segment.arithmeticDecoder.iaidStats)
             referenceDX = segment.arithmeticDecoder.decodeInt(segment.arithmeticDecoder.iardxStats).value.int64
@@ -238,7 +287,9 @@ method readSegment*(segment: SymbolDictionarySegment) =
       var bmSize: int64 = 0
 
       if sdHuff:
-        discard  # Would decode bmSize
+        let bmResult = segment.huffmanDecoder.decodeInt(huffmanBMSizeTable)
+        if bmResult.success:
+          bmSize = bmResult.value
 
       if bmSize == 0:
         # Uncompressed bitmap
@@ -298,7 +349,9 @@ method readSegment*(segment: SymbolDictionarySegment) =
   while symbolIdx < numberOfInputSymbols + segment.noOfNewSymbols:
     var run: int64 = 0
     if sdHuff:
-      discard  # Would decode using Huffman
+      let runResult = segment.huffmanDecoder.decodeInt(huffmanTableA)
+      if runResult.success:
+        run = runResult.value
     else:
       run = segment.arithmeticDecoder.decodeInt(segment.arithmeticDecoder.iaexStats).value.int64
 
