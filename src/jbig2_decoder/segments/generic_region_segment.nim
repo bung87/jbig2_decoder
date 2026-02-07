@@ -139,11 +139,9 @@ method readSegment*(segment: GenericRegionSegment) =
 
   if useMMR:
     # MMR decoding
-    let mmrDataLength = if dataLength >= 0: dataLength else: -1
-    bitmap.readBitmapMMR(segment.reader, segment.mmrDecoder, mmrDataLength)
+    bitmap.readBitmapMMR(segment.reader, segment.mmrDecoder, if dataLength >= 0: dataLength else: -1)
   else:
     # Arithmetic decoding
-    let mmrDataLength = if dataLength >= 0: dataLength - 18 else: -1
     bitmap.readBitmapArithmetic(segment.reader, segment.arithmeticDecoder, gbTemplate, tpgdon, adaptiveTemplateX, adaptiveTemplateY)
 
   # Handle inline image or append to decoder

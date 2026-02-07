@@ -1,9 +1,7 @@
 ## JBIG2 Bitmap implementation
 import ./arithmetic_decoder
-import ./huffman_decoder
 import ./mmr_decoder
 import ./stream_reader
-import ./binary_ops
 
 type
   JBIG2Bitmap* = ref object
@@ -157,7 +155,7 @@ proc readBitmapMMR*(bitmap: JBIG2Bitmap, reader: Big2StreamReader, mmrDecoder: M
     while not done:
       # Get two code words
       let code1 = mmrDecoder.get2DCode()
-      let code2 = mmrDecoder.get2DCode()
+      discard mmrDecoder.get2DCode()  # code2 - not used directly
 
       if code1 == twoDimensionalPass:
         # Pass mode - copy reference run

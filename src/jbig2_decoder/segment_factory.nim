@@ -1,12 +1,9 @@
 ## Segment factory for creating appropriate segment types
 import ./segment
-import ./jbig2_bitmap
-import ./segment_header
 import ./arithmetic_decoder
 import ./huffman_decoder
 import ./mmr_decoder
 import ./stream_reader
-import ./binary_ops
 import ./stream_decoder_types
 
 # Import segment types from segments directory

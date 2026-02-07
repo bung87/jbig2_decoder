@@ -345,8 +345,8 @@ proc readSegments*(decoder: JBIG2StreamDecoder) =
     var segment: Segment = nil
 
     let segmentType = segmentHeader.segmentType
-    let referredToSegments = segmentHeader.referredToSegments
-    let noOfReferredToSegments = segmentHeader.referredToSegmentCount
+    discard segmentHeader.referredToSegments  # used via segment.setSegmentHeader
+    discard segmentHeader.referredToSegmentCount  # used via segment.setSegmentHeader
 
     # Cast decoder to JBIG2StreamDecoderRef for passing to segments
     let streamDecoderRef = cast[JBIG2StreamDecoderRef](decoder)

@@ -8,7 +8,6 @@ import ../stream_reader
 import ../binary_ops
 import ../segment_header
 import ../stream_decoder_types
-import math
 
 type
   SymbolDictionarySegment* = ref object of Segment
@@ -100,10 +99,10 @@ method readSegment*(segment: SymbolDictionarySegment) =
   # Extract flag values
   let sdHuff = (segment.symbolDictionaryFlags and 1) != 0
   let sdRefAgg = ((segment.symbolDictionaryFlags shr 1) and 1) != 0
-  let sdHuffDH = ((segment.symbolDictionaryFlags shr 2) and 3)
-  let sdHuffDW = ((segment.symbolDictionaryFlags shr 4) and 3)
-  let sdHuffBMSize = ((segment.symbolDictionaryFlags shr 6) and 1)
-  let sdHuffAggInst = ((segment.symbolDictionaryFlags shr 7) and 1)
+  discard ((segment.symbolDictionaryFlags shr 2) and 3)  # sdHuffDH - reserved for future use
+  discard ((segment.symbolDictionaryFlags shr 4) and 3)  # sdHuffDW - reserved for future use
+  discard ((segment.symbolDictionaryFlags shr 6) and 1)  # sdHuffBMSize - reserved for future use
+  discard ((segment.symbolDictionaryFlags shr 7) and 1)  # sdHuffAggInst - reserved for future use
   let contextUsed = ((segment.symbolDictionaryFlags shr 8) and 1) != 0
   let sdTemplate = ((segment.symbolDictionaryFlags shr 10) and 3)
   let sdRefTemplate = ((segment.symbolDictionaryFlags shr 12) and 1)
@@ -129,15 +128,10 @@ method readSegment*(segment: SymbolDictionarySegment) =
   # Initialize bitmaps array
   var bitmaps = newSeq[JBIG2Bitmap](numberOfInputSymbols + segment.noOfNewSymbols)
 
-  # Set up Huffman tables if using Huffman coding
-  var huffmanDHTable: seq[seq[int64]] = @[]
-  var huffmanDWTable: seq[seq[int64]] = @[]
-  var huffmanBMSizeTable: seq[seq[int64]] = @[]
-  var huffmanAggInstTable: seq[seq[int64]] = @[]
-
   if sdHuff:
     # Set up Huffman tables based on flag values
     # These would need to reference actual Huffman tables
+    # var huffmanDHTable, huffmanDWTable, huffmanBMSizeTable, huffmanAggInstTable
     discard
 
   # Initialize arithmetic decoder if not using Huffman

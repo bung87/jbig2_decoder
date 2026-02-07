@@ -1,9 +1,4 @@
 ## Base segment types and common definitions
-import ../segment
-import ../jbig2_bitmap
-import ../arithmetic_decoder
-import ../huffman_decoder
-import ../mmr_decoder
 import ../stream_reader
 import ../binary_ops
 
