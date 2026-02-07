@@ -1,0 +1,32 @@
+## Text Region Segment tests
+## Matches the structure of Java's TextRegionTest.java
+
+import std/os
+import jbig2_decoder/jbig2_stream_decoder
+import jbig2_decoder/jbig2_types
+
+# Test data file path (matching Java's "target/images/042_11.jb2")
+const testFilePath = currentSourcePath.parentDir / ".." / "resources/images/042_11.jb2"
+# const altTestFilePath = "tests/resources/images/001.jb2"
+
+proc textRegionWith() =
+  ## Test text region decoding - matches Java's textRegionWith()
+
+  # Load the test file
+  let fileData = readFile(testFilePath)
+  var byteData = newSeq[byte](fileData.len)
+  for i in 0..<fileData.len:
+    byteData[i] = cast[byte](fileData[i])
+
+  # Create decoder and decode the JBIG2 data
+  let decoder = newJBIG2StreamDecoder()
+
+  # Decode the JBIG2 data to bitmap
+  let decodedData = decoder.decodeJBIG2(byteData, TIFF, 0, 0)
+
+  # Verify that we got decoded data
+  doAssert decodedData.len > 0, "Decoded data should not be empty"
+
+
+block TextRegionTests:
+  textRegionWith()
