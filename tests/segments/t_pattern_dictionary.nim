@@ -3,12 +3,8 @@ import std/[os, strformat]
 import jbig2_decoder/jbig2_bitmap
 
 block PatternDictionaryTests:
-  echo "Running Pattern Dictionary Tests..."
-
   # Test basic pattern dictionary operations
   block BasicPatternDictionary:
-    echo "  Testing basic pattern dictionary operations..."
-    
     # Create several pattern bitmaps
     let pattern1 = newJBIG2Bitmap(8, 8, 0)
     let pattern2 = newJBIG2Bitmap(8, 8, 1)
@@ -29,12 +25,9 @@ block PatternDictionaryTests:
           differences.inc()
     
     doAssert differences > 0, "Patterns should be different"
-    echo "    ✓ Basic pattern dictionary passed"
 
   # Test pattern dictionary with different sizes
   block PatternDictionarySizes:
-    echo "  Testing pattern dictionary with different sizes..."
-    
     # Create patterns of different sizes
     let smallPattern = newJBIG2Bitmap(4, 4, 0)
     let mediumPattern = newJBIG2Bitmap(8, 8, 1)
@@ -57,7 +50,3 @@ block PatternDictionaryTests:
     doAssert smallPattern.width == 4 and smallPattern.height == 4
     doAssert mediumPattern.width == 8 and mediumPattern.height == 8
     doAssert largePattern.width == 16 and largePattern.height == 16
-    
-    echo "    ✓ Pattern dictionary sizes passed"
-
-  echo "All Pattern Dictionary Tests passed!"

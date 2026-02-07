@@ -7,8 +7,6 @@ discard """
 
 import jbig2_decoder/stream_reader
 
-echo "Testing GenericRegion error handling (expecting failure)..."
-
 # Test with corrupted or insufficient data - this should cause an error
 let corruptedData = newSeq[byte](0)
 let reader = newBig2StreamReader(corruptedData)

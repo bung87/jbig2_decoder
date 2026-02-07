@@ -3,11 +3,8 @@ import std/[os, strformat]
 import jbig2_decoder/jbig2_bitmap
 
 block HalftoneRegionTests:
-  echo "Running Halftone Region Tests..."
-
   # Test basic halftone region creation
   block BasicHalftoneRegion:
-    echo "  Testing basic halftone region creation..."
     let bitmap = newJBIG2Bitmap(60, 60, 0)
     
     # Create a simple halftone pattern
@@ -39,11 +36,9 @@ block HalftoneRegionTests:
           break
     
     doAssert hasPatterns == true, "Halftone pattern should be visible in bitmap"
-    echo "    ✓ Basic halftone region passed"
 
   # Test halftone region with different patterns
   block DifferentHalftonePatterns:
-    echo "  Testing halftone region with different patterns..."
     let bitmap = newJBIG2Bitmap(40, 40, 0)
     
     # Test different pattern sizes
@@ -67,7 +62,3 @@ block HalftoneRegionTests:
               
               if bitmapX < 40 and bitmapY < 40:
                 bitmap.setPixel(bitmapX, bitmapY, pattern.getPixel(x, y))
-    
-    echo "    ✓ Different halftone patterns passed"
-
-  echo "All Halftone Region Tests passed!"

@@ -3,12 +3,8 @@ import std/[os, strformat]
 import jbig2_decoder/jbig2_bitmap
 
 block SymbolDictionaryTests:
-  echo "Running Symbol Dictionary Tests..."
-
   # Test basic symbol dictionary creation
   block BasicSymbolDictionary:
-    echo "  Testing basic symbol dictionary creation..."
-    
     # Create a symbol dictionary with several symbols
     let dictionarySize = 4
     var symbols: seq[JBIG2Bitmap] = @[]
@@ -31,13 +27,9 @@ block SymbolDictionaryTests:
     # Verify each symbol has unique bitmap number
     for i in 0..<dictionarySize:
       doAssert symbols[i].bitmapNumber == i, fmt"Symbol {i} should have bitmap number {i}"
-    
-    echo "    ✓ Basic symbol dictionary passed"
 
   # Test symbol dictionary with different sizes
   block SymbolDictionarySizes:
-    echo "  Testing symbol dictionary with different sizes..."
-    
     # Test different symbol sizes
     let sizes = [(8, 8), (12, 12), (16, 16), (20, 20)]
     
@@ -63,13 +55,9 @@ block SymbolDictionaryTests:
             break
       
       doAssert hasPixels == true, fmt"Symbol {width}x{height} should have pixels"
-    
-    echo "    ✓ Symbol dictionary sizes passed"
 
   # Test symbol dictionary indexing
   block SymbolDictionaryIndexing:
-    echo "  Testing symbol dictionary indexing..."
-    
     # Create a symbol dictionary
     let symbols = @[
       newJBIG2Bitmap(16, 16, 100),
@@ -102,7 +90,3 @@ block SymbolDictionaryTests:
     doAssert symbols[1].getPixel(0, 0) == 1, "Second symbol should have horizontal stripes"
     doAssert symbols[2].getPixel(0, 0) == 1, "Third symbol should have checkerboard"
     doAssert symbols[3].getPixel(0, 0) == 1, "Fourth symbol should have diagonal"
-    
-    echo "    ✓ Symbol dictionary indexing passed"
-
-  echo "All Symbol Dictionary Tests passed!"

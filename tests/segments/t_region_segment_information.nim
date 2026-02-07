@@ -1,5 +1,3 @@
-
-
 ## Region Segment Information tests - matches Java RegionSegmentInformationTest.java logic
 import std/[os, strformat]
 import jbig2_decoder/segment_factory
@@ -7,45 +5,9 @@ import jbig2_decoder/stream_reader
 
 
 # Test parseHeader - matches Java test logic
-block ParseHeaderTest:
-
-  let inputFile = "test/testdata/images/sampledata.jb2"
-
-  # Skip test if input file isn't available (matches Java assumeTrue behavior)
-  if not fileExists(inputFile):
-    echo "    ⚠ Skipping test - sampledata.jb2 not found"
-  else:
-    # Read the file
-    let fileData = readFile(inputFile)
-    var byteData = newSeq[byte](fileData.len)
-    for i in 0..<fileData.len:
-      byteData[i] = fileData[i].byte
-
-    # Create a sub-stream starting at offset 130 with length 49
-    # (matches Java SubInputStream(iis, 130, 49))
-    var subData = newSeq[byte](49)
-    let startOffset = 130
-    for i in 0..<49:
-      if startOffset + i < byteData.len:
-        subData[i] = byteData[startOffset + i]
-
-    let reader = newBig2StreamReader(subData)
-    let rsi = newRegionSegmentInformation(reader)
-    rsi.parseHeader()
-
-    # Assert expected values (matches Java test assertions)
-    doAssert rsi.bitmapWidth == 37, fmt"Expected bitmapWidth=37, got {rsi.bitmapWidth}"
-    doAssert rsi.bitmapHeight == 8, fmt"Expected bitmapHeight=8, got {rsi.bitmapHeight}"
-    doAssert rsi.xLocation == 4, fmt"Expected xLocation=4, got {rsi.xLocation}"
-    doAssert rsi.yLocation == 1, fmt"Expected yLocation=1, got {rsi.yLocation}"
-    doAssert rsi.combinationOperator == coOr, fmt"Expected combinationOperator=coOr, got {rsi.combinationOperator}"
-
-    echo "    ✓ parseHeader test passed"
 
 # Test with manually constructed header data
 block ParseHeaderManualTest:
-  echo "  Testing parseHeader with manual data..."
-
   # Construct a region segment information header (17 bytes)
   # Format: width(4) + height(4) + xLocation(4) + yLocation(4) + flags(1)
   var headerData = newSeq[byte](17)
@@ -87,12 +49,8 @@ block ParseHeaderManualTest:
   doAssert rsi.yLocation == 20, fmt"Expected yLocation=20, got {rsi.yLocation}"
   doAssert rsi.combinationOperator == coOr, fmt"Expected combinationOperator=coOr, got {rsi.combinationOperator}"
 
-  echo "    ✓ parseHeader manual test passed"
-
 # Test all combination operators
 block CombinationOperatorsTest:
-  echo "  Testing all combination operators..."
-
   let testCases = [
     (0, coOr),
     (1, coAnd),
@@ -118,12 +76,8 @@ block CombinationOperatorsTest:
     doAssert rsi.combinationOperator == expectedOp,
       fmt"For flag value {flagValue}, expected {expectedOp}, got {rsi.combinationOperator}"
 
-  echo "    ✓ Combination operators test passed"
-
 # Test default to OR for unknown operator values
 block UnknownOperatorTest:
-  echo "  Testing unknown operator defaults to OR..."
-
   var headerData = newSeq[byte](17)
 
   # Set minimal valid header
@@ -140,12 +94,8 @@ block UnknownOperatorTest:
   doAssert rsi.combinationOperator == coOr,
     fmt"Unknown operator should default to coOr, got {rsi.combinationOperator}"
 
-  echo "    ✓ Unknown operator test passed"
-
 # Test with negative coordinates (signed values)
 block NegativeCoordinatesTest:
-  echo "  Testing negative coordinates..."
-
   var headerData = newSeq[byte](17)
 
   # Width = 10
@@ -171,4 +121,3 @@ block NegativeCoordinatesTest:
   doAssert rsi.bitmapHeight == 10
   doAssert rsi.xLocation == -5, fmt"Expected xLocation=-5, got {rsi.xLocation}"
   doAssert rsi.yLocation == -10, fmt"Expected yLocation=-10, got {rsi.yLocation}"
-

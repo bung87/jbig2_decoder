@@ -6,7 +6,6 @@ import jbig2_decoder/jbig2_bitmap
 
 # Test basic blitting
 block BasicBlitting:
-  echo "  Testing basic bitmap blitting..."
   let source = newJBIG2Bitmap(10, 10, 0)
   let destination = newJBIG2Bitmap(20, 20, 0)
   
@@ -22,12 +21,9 @@ block BasicBlitting:
   for x in 0..<10:
     for y in 0..<10:
       doAssert destination.getPixel(10 + x, 10 + y) == source.getPixel(x, y), "Blitted pixels should match source"
-  
-  echo "    ✓ Basic blitting passed"
 
 # Test blitting with different positions
 block BlittingPositions:
-  echo "  Testing blitting at different positions..."
   let source = newJBIG2Bitmap(5, 5, 0)
   let destination = newJBIG2Bitmap(15, 15, 0)
   
@@ -51,12 +47,9 @@ block BlittingPositions:
           transferredPixels.inc()
     
     doAssert transferredPixels == 25, "All 25 pixels should be transferred"
-  
-  echo "    ✓ Blitting at different positions passed"
 
 # Test blitting with partial overlap
 block PartialOverlapBlitting:
-  echo "  Testing partial overlap blitting..."
   let source = newJBIG2Bitmap(10, 10, 0)
   let destination = newJBIG2Bitmap(10, 10, 0)
   
@@ -75,12 +68,9 @@ block PartialOverlapBlitting:
         doAssert destination.getPixel(x, y) == source.getPixel(x - 5, y - 5), "Overlapping area should match"
       else:
         doAssert destination.getPixel(x, y) == 0, "Non-overlapping area should remain 0"
-  
-  echo "    ✓ Partial overlap blitting passed"
 
 # Test blitting with negative offsets
 block NegativeOffsetBlitting:
-  echo "  Testing negative offset blitting..."
   let source = newJBIG2Bitmap(5, 5, 0)
   let destination = newJBIG2Bitmap(10, 10, 0)
   
@@ -102,7 +92,3 @@ block NegativeOffsetBlitting:
         doAssert destination.getPixel(x, y) == 1, "Visible portion at (" & $x & "," & $y & ") should be 1"
       else:
         doAssert destination.getPixel(x, y) == 0, "Hidden portion at (" & $x & "," & $y & ") should be 0"
-  
-  echo "    ✓ Negative offset blitting passed"
-
-echo "All Bitmap Blitting Tests passed!"

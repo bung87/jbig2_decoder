@@ -6,7 +6,6 @@ import jbig2_decoder/jbig2_bitmap
 
 # Test checksum for simple bitmap
 block SimpleBitmapChecksum:
-  echo "  Testing simple bitmap checksum..."
   let bitmap = newJBIG2Bitmap(10, 10, 0)
   
   # Create a simple pattern
@@ -19,12 +18,9 @@ block SimpleBitmapChecksum:
   
   doAssert checksum.len > 0, "Pattern bitmap checksum should not be empty"
   doAssert checksum[0].isDigit() == true, "Checksum should start with a digit"
-  
-  echo "    ✓ Simple bitmap checksum passed"
 
 # Test checksum consistency
 block ChecksumConsistency:
-  echo "  Testing checksum consistency..."
   let bitmap1 = newJBIG2Bitmap(8, 8, 0)
   let bitmap2 = newJBIG2Bitmap(8, 8, 0)
   
@@ -38,12 +34,9 @@ block ChecksumConsistency:
   let checksum2 = computeChecksum(bitmap2.getData())
   
   doAssert checksum1 == checksum2, "Identical bitmaps should produce identical checksums"
-  
-  echo "    ✓ Checksum consistency passed"
 
 # Test checksum differences
 block ChecksumDifferences:
-  echo "  Testing checksum differences..."
   let bitmap1 = newJBIG2Bitmap(8, 8, 0)
   let bitmap2 = newJBIG2Bitmap(8, 8, 0)
   
@@ -57,7 +50,3 @@ block ChecksumDifferences:
   let checksum2 = computeChecksum(bitmap2.getData())
   
   doAssert checksum1 != checksum2, "Different bitmaps should produce different checksums"
-  
-  echo "    ✓ Checksum differences passed"
-
-echo "All Bitmap Checksum Tests passed!"

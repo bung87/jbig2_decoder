@@ -6,7 +6,6 @@ import jbig2_decoder/jbig2_bitmap
 
 # Test basic getData
 block BasicGetData:
-  echo "  Testing basic getData..."
   let bitmap = newJBIG2Bitmap(16, 2, 0)
   
   # Set specific pattern: first row all pixels, second row alternating
@@ -27,12 +26,9 @@ block BasicGetData:
   for x in 0..<16:
     let expected = if x mod 2 == 0: 255'u8 else: 0'u8
     doAssert bitmapData[16 + x] == expected, "Second row should be alternating"
-  
-  echo "    ✓ Basic getData passed"
 
 # Test getData with switchPixelColor
 block GetDataWithColorSwitch:
-  echo "  Testing getData with color switch..."
   let bitmap = newJBIG2Bitmap(8, 1, 0)
   
   # Set alternating pattern
@@ -52,13 +48,9 @@ block GetDataWithColorSwitch:
     let invertedExpected = if x mod 2 == 0: 0'u8 else: 255'u8
     doAssert normalData[x] == normalExpected, "Normal data should match"
     doAssert invertedData[x] == invertedExpected, "Inverted data should match"
-  
-  echo "    ✓ GetData with color switch passed"
 
 # Test getData with different bitmap sizes
 block GetDataDifferentSizes:
-  echo "  Testing getData with different sizes..."
-  
   # Test 1x1 bitmap
   let bitmap1 = newJBIG2Bitmap(1, 1, 0)
   bitmap1.setPixel(0, 0, 1)
@@ -75,12 +67,9 @@ block GetDataDifferentSizes:
   doAssert data2.len == 16, "4x4 bitmap should produce 16 bytes"
   for i in 0..<16:
     doAssert data2[i] == 255'u8, "All pixels should be 255"
-  
-  echo "    ✓ GetData with different sizes passed"
 
 # Test getData with empty bitmap
 block GetDataEmptyBitmap:
-  echo "  Testing getData with empty bitmap..."
   let bitmap = newJBIG2Bitmap(10, 10, 0)
   
   # All pixels are 0 by default
@@ -88,7 +77,3 @@ block GetDataEmptyBitmap:
   doAssert data.len == 100, "10x10 bitmap should produce 100 bytes"
   for i in 0..<100:
     doAssert data[i] == 0'u8, "All pixels should be 0 (black)"
-  
-  echo "    ✓ GetData with empty bitmap passed"
-
-echo "All Byte Combination Tests passed!"

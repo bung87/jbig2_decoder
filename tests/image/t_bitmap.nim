@@ -5,17 +5,14 @@ import jbig2_decoder/jbig2_bitmap
 
 # Test basic bitmap creation
 block BasicBitmapCreation:
-  echo "  Testing basic bitmap creation..."
   let bitmap = newJBIG2Bitmap(10, 10, 0)
   
   doAssert bitmap.width == 10, "Bitmap width should be 10"
   doAssert bitmap.height == 10, "Bitmap height should be 10"
   doAssert bitmap.bitmapNumber == 0, "Bitmap number should be 0"
-  echo "    ✓ Basic bitmap creation passed"
 
 # Test pixel operations
 block PixelOperations:
-  echo "  Testing JBIG2Bitmap pixel operations..."
   let bitmap = newJBIG2Bitmap(50, 50, 0)
   
   # Test setting and getting pixels
@@ -32,12 +29,9 @@ block PixelOperations:
   # Test that setting out of bounds doesn't crash
   bitmap.setPixel(-1, -1, 1)
   bitmap.setPixel(100, 100, 1)
-  
-  echo "    ✓ Pixel operations passed"
 
 # Test bitmap data conversion
 block BitmapDataConversion:
-  echo "  Testing bitmap data conversion..."
   let bitmap = newJBIG2Bitmap(8, 8, 0)
   
   # Create a simple pattern
@@ -47,12 +41,9 @@ block BitmapDataConversion:
   
   let data = bitmap.getData()
   doAssert data.len == 64, "8x8 bitmap should produce 64 bytes of data (1 byte per pixel)"
-  
-  echo "    ✓ Bitmap data conversion passed"
 
 # Test bitmap combination
 block BitmapCombination:
-  echo "  Testing bitmap combination..."
   let source = newJBIG2Bitmap(5, 5, 0)
   let destination = newJBIG2Bitmap(10, 10, 0)
   
@@ -68,12 +59,9 @@ block BitmapCombination:
   for x in 0..<5:
     for y in 0..<5:
       doAssert destination.getPixel(2 + x, 2 + y) == source.getPixel(x, y), "Combined bitmap should match source pattern"
-  
-  echo "    ✓ Bitmap combination passed"
 
 # Test bitmap clearing
 block BitmapClearing:
-  echo "  Testing bitmap clearing..."
   let bitmap = newJBIG2Bitmap(10, 10, 0)
   
   # Fill with 1 values
@@ -88,12 +76,9 @@ block BitmapClearing:
   for x in 0..<10:
     for y in 0..<10:
       doAssert bitmap.getPixel(x, y) == 0, "All pixels should be 0 after clearing"
-  
-  echo "    ✓ Bitmap clearing passed"
 
 # Test bitmap pointer operations
 block BitmapPointerOperations:
-  echo "  Testing bitmap pointer operations..."
   let bitmap = newJBIG2Bitmap(20, 20, 0)
   let pointer = newBitmapPointer(bitmap, 5, 5)
   
@@ -103,8 +88,3 @@ block BitmapPointerOperations:
   
   # Test getting pixel via pointer
   doAssert pointer.getPixel() == true, "Pointer should return true for set pixel"
-  
-  echo "    ✓ Bitmap pointer operations passed"
-
-echo "All JBIG2Bitmap Tests passed!"
-

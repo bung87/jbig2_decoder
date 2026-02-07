@@ -15,12 +15,9 @@ proc parseHeaderTest() =
   ## Test parsing GenericRegion header - matches Java's parseHeaderTest()
   ## Tests the Twelfth Segment (number 11) at offset 523 with length 35
 
-  echo "  Running parseHeaderTest..."
-
   # Load the test file using the utility function
   let byteData = loadJBIG2TestFile("001.jb2")
   if byteData.len == 0:
-    echo "  Skipping parseHeaderTest - test file not found"
     return
 
   let reader = newBig2StreamReader(byteData)
@@ -41,59 +38,8 @@ proc parseHeaderTest() =
   doAssert genericRegion != nil, "GenericRegionSegment should be created"
   doAssert genericRegion.immediate == true, "Segment should be immediate"
 
-  echo "    parseHeaderTest passed"
-
-proc decodeTemplate0Test() =
-  ## Test decoding with template 0 - matches Java's decodeTemplate0Test()
-  ## This test is marked as @Ignore in Java (for manual visual testing)
-
-  echo "  Running decodeTemplate0Test (visual test - skipped in automated runs)..."
-
-  # Load the test file using the utility function
-  let byteData = loadJBIG2TestFile("001.jb2")
-  if byteData.len == 0:
-    echo "  Skipping decodeTemplate0Test - test file not found"
-    return
-
-  # In Java, this test is marked @Ignore and creates a TestImage for visual verification
-  # We skip the actual bitmap decoding for automated testing
-  echo "    decodeTemplate0Test skipped (visual verification only)"
-
-proc decodeWithArithmeticCodingTest() =
-  ## Test decoding with arithmetic coding - matches Java's decodeWithArithmetichCoding()
-  ## This test is marked as @Ignore in Java
-
-  echo "  Running decodeWithArithmeticCodingTest (visual test - skipped in automated runs)..."
-
-  # Load the test file using the utility function
-  let byteData = loadJBIG2TestFile("001.jb2")
-  if byteData.len == 0:
-    echo "  Skipping decodeWithArithmeticCodingTest - test file not found"
-    return
-
-  # In Java, this test is marked @Ignore and creates a TestImage for visual verification
-  echo "    decodeWithArithmeticCodingTest skipped (visual verification only)"
-
-proc decodeWithMMRTest() =
-  ## Test decoding with MMR - matches Java's decodeWithMMR()
-  ## This test is marked as @Ignore in Java
-  ## Tests the Fifth Segment (number 4) at offset 190 with length 59
-
-  echo "  Running decodeWithMMRTest (visual test - skipped in automated runs)..."
-
-  # Load the test file using the utility function
-  let byteData = loadJBIG2TestFile("001.jb2")
-  if byteData.len == 0:
-    echo "  Skipping decodeWithMMRTest - test file not found"
-    return
-
-  # In Java, this test is marked @Ignore and creates a TestImage for visual verification
-  # Tests segment at offset 190 with length 59
-  echo "    decodeWithMMRTest skipped (visual verification only)"
-
 proc testGenericRegionFlags() =
   ## Test GenericRegion flags parsing
-  echo "  Testing GenericRegion flags parsing..."
 
   # Create test data for generic region flags
   # Flags byte: bits 0 = MMR, bits 1-2 = template, bit 3 = TPGDON
@@ -118,12 +64,9 @@ proc testGenericRegionFlags() =
   let gbTemplate2 = (template2Flags shr 1) and 0x03
   doAssert gbTemplate2 == 2, "Template should be 2"
 
-  echo "    GenericRegion flags parsing passed"
-
 proc testAdaptiveTemplateValues() =
   ## Test adaptive template (AT) values parsing
   ## Matches Java's gbAtX and gbAtY array assertions
-  echo "  Testing adaptive template values..."
 
   # Create test data for adaptive template values
   # In Java test: gbAtX[0]=3, gbAtY[0]=-1, gbAtX[1]=-3, gbAtY[1]=-1, etc.
@@ -170,12 +113,9 @@ proc testAdaptiveTemplateValues() =
   doAssert gbAtX[3] == -2, "gbAtX[3] should be -2, got " & $gbAtX[3]
   doAssert gbAtY[3] == -2, "gbAtY[3] should be -2, got " & $gbAtY[3]
 
-  echo "    Adaptive template values passed"
-
 proc testRegionSegmentInformation() =
   ## Test Region Segment Information parsing
   ## Matches Java's assertions for region info (width, height, x, y, combination operator)
-  echo "  Testing Region Segment Information..."
 
   # Create test data for region segment information
   # Java test expects: width=54, height=44, x=4, y=11, combinationOperator=OR
@@ -245,11 +185,8 @@ proc testRegionSegmentInformation() =
   doAssert yLocation == 11, "Y location should be 11, got " & $yLocation
   doAssert combinationOperator == 0, "Combination operator should be 0 (OR), got " & $combinationOperator
 
-  echo "    Region Segment Information passed"
-
 proc testUseExtTemplates() =
   ## Test useExtTemplates flag
-  echo "  Testing useExtTemplates flag..."
 
   # In JBIG2, extended templates are used when specific conditions are met
   # For this test, we verify the flag is properly handled
@@ -265,11 +202,8 @@ proc testUseExtTemplates() =
 
   doAssert not useExtTemplates, "useExtTemplates should be false"
 
-  echo "    useExtTemplates flag passed"
-
 proc testIsMMREncoded() =
   ## Test isMMREncoded flag
-  echo "  Testing isMMREncoded flag..."
 
   # Test with MMR disabled (bit 0 = 0)
   let noMmrFlags: byte = 0x00
@@ -281,11 +215,8 @@ proc testIsMMREncoded() =
   let isMmr2 = (mmrFlags and 0x01) != 0
   doAssert isMmr2, "isMMREncoded should be true"
 
-  echo "    isMMREncoded flag passed"
-
 proc testIsTPGDon() =
   ## Test isTPGDon (Typical Prediction for Generic Direct Coding) flag
-  echo "  Testing isTPGDon flag..."
 
   # Test with TPGDON disabled (bit 3 = 0)
   let noTpgdonFlags: byte = 0x00
@@ -297,11 +228,8 @@ proc testIsTPGDon() =
   let isTpgdon2 = ((tpgdonFlags shr 3) and 0x01) != 0
   doAssert isTpgdon2, "isTPGDon should be true"
 
-  echo "    isTPGDon flag passed"
-
 proc testGbTemplate() =
   ## Test gbTemplate value (template selection)
-  echo "  Testing gbTemplate values..."
 
   # Test template 0 (bits 1-2 = 00)
   let template0Flags: byte = 0x00
@@ -323,16 +251,8 @@ proc testGbTemplate() =
   let gbTemplate3 = (template3Flags shr 1) and 0x03
   doAssert gbTemplate3 == 3, "gbTemplate should be 3"
 
-  echo "    gbTemplate values passed"
-
-# Main test runner
-echo "Running Generic Region Tests..."
-
 # Run all tests
 parseHeaderTest()
-decodeTemplate0Test()
-decodeWithArithmeticCodingTest()
-decodeWithMMRTest()
 testGenericRegionFlags()
 testAdaptiveTemplateValues()
 testRegionSegmentInformation()
@@ -340,5 +260,3 @@ testUseExtTemplates()
 testIsMMREncoded()
 testIsTPGDon()
 testGbTemplate()
-
-echo "All Generic Region Tests completed successfully!"

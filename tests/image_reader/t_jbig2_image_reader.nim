@@ -61,15 +61,11 @@ block JBIG2ImageReaderWith002File:
   doAssert sharedPageBitmap.width > 0, "Page width should be positive"
   doAssert sharedPageBitmap.height > 0, "Page height should be positive"
   
-  echo fmt"Successfully decoded 002.jb2: {sharedPageBitmap.width}x{sharedPageBitmap.height}"
-  
   # Test checksum validation
   let bitmapData = sharedPageBitmap.getData()
   let checksum = computeChecksum(bitmapData)
   
-  echo fmt"Page checksum: {checksum}"
-  echo fmt"Data size: {bitmapData.len} bytes"
-  
+
   doAssert checksum.len > 0, "Checksum should not be empty"
 
 # Test JBIG2ImageReader error handling
