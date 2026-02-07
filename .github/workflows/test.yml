@@ -18,7 +18,7 @@ jobs:
           - windows-latest
           - macOS-12
         version:
-          - version-2-1
+          - version-2-2
           - devel
     steps:
     - name: Checkout
@@ -45,4 +45,5 @@ jobs:
     - name: Test
       continue-on-error: ${{ matrix.version == 'devel' }}
       run: |
+        nimble install -y
         testament all
