@@ -8,7 +8,7 @@ import ../../testdata/jbig2_test_config
 
 block DecodeTest:
 
-  let testData = loadArithmeticTestData("encoded testsequence")
+  let testData = loadArithmeticTestData("encoded_testsequence.bin")
   doAssert testData.len > 0, "Should load test resource file successfully"
   
   let reader = newBig2StreamReader(testData)
