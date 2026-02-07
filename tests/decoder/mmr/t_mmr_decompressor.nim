@@ -8,29 +8,27 @@ import jbig2_decoder/mmr_decoder
 block MMRDecodingTest:
   # Check if test file exists (use currentSourcePath to get test file location)
   let testDir = currentSourcePath().parentDir
-  let testFilePath = testDir / ".." / ".." / ".." / "resources" / "images" / "001.jb2"
+  let testFilePath = testDir / ".." / ".." / ".." / "tests" / "testdata" / "images" / "001.jb2"
+
+  doAssert fileExists(testFilePath), "Test file 001.jb2 not found"
   let absPath = absolutePath(testFilePath)
-  if not fileExists(absPath):
-    echo "    Skipping test: Test file not found: ", absPath
-  else:
-    # Read the JBIG2 file
-    let fileStream = newFileStream(absPath, fmRead)
-    if fileStream == nil:
-      echo "    Skipping test: Could not open test file"
-    else:
-      # Read file data
-      var fileData: seq[byte] = @[]
-      while not fileStream.atEnd():
-        fileData.add(cast[byte](fileStream.readChar()))
-      fileStream.close()
-      
-      # For now, just verify we can create an MMR decoder
-      # The actual segment extraction would require full JBIG2 parsing
-      let reader = newBig2StreamReader(fileData)
-      let decoder = newMMRDecoder(reader)
-      
-      doAssert decoder != nil, "MMR decoder should be successfully created"
-      doAssert decoder.reader == reader, "MMR decoder should reference the correct stream reader"
+
+  # Read the JBIG2 file
+  let fileStream = newFileStream(absPath, fmRead)
+
+  # Read file data
+  var fileData: seq[byte] = @[]
+  while not fileStream.atEnd():
+    fileData.add(cast[byte](fileStream.readChar()))
+  fileStream.close()
+  
+  # For now, just verify we can create an MMR decoder
+  # The actual segment extraction would require full JBIG2 parsing
+  let reader = newBig2StreamReader(fileData)
+  let decoder = newMMRDecoder(reader)
+  
+  doAssert decoder != nil, "MMR decoder should be successfully created"
+  doAssert decoder.reader == reader, "MMR decoder should reference the correct stream reader"
 
   # Test MMRDecoder creation and initialization
 block MMRDecoderCreationAndInitialization:
